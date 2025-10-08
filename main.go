@@ -2,7 +2,6 @@ package main
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	// "fmt"
 	"slices"
 )
 
@@ -37,6 +36,11 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Black)
 
+		// reset upon clear
+		if len(blockGrid) == 0 {
+			resetGame(&paddle, &ball, &blockGrid)
+		}
+
 		// block grid
 		drawGrid(blockGrid)
 
@@ -63,8 +67,7 @@ func main() {
 
 		// reset ball if it flies off screen
 		if int32(ball.Position.Y - ball.Radius*1.5) > ScreenHeight{
-			blockGrid = initGrid()
-			ball.resetBall(rl.NewVector2(float32(paddle.X + 125/2), float32(paddle.Y - ballRad)), ballVel)
+			resetGame(&paddle, &ball, &blockGrid)
 		}
 
 		// keep ball on paddle until it is off/launched
@@ -121,8 +124,8 @@ func main() {
 			if rl.CheckCollisionCircleRec(ball.Position, ball.Radius, block.BlockTile){
 				//remove from slice or refactor into a map idk
 				//increase y velocity to speed up
-				slices.Delete(blockGrid, i, i+1)
-				ball.Vel.Y *= 1.075
+				blockGrid = slices.Delete(blockGrid, i, i+1)
+				ball.Vel.Y *= 1.05
 				// ball.Vel = rl.Vector2Add(ball.Vel, rl.Vector2Scale(ball.Vel, 1.001))
 				ball.Bounce()
 			}
@@ -154,4 +157,11 @@ func main() {
 
 		rl.EndDrawing()
 	}
+}
+
+func resetGame(paddle *rl.Rectangle, ball *Ball, blockGrid *[]Block){
+	*paddle = rl.NewRectangle(float32(ScreenWidth/2 - 125/2), float32(ScreenHeight - 50), 125, 5)
+	*blockGrid = initGrid()
+	ball.resetBall(rl.NewVector2(float32(paddle.X + 125/2), float32(paddle.Y - ball.Radius)), rl.NewVector2(0, 300))
+	ball.offPaddle = false
 }
