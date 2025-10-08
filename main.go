@@ -18,7 +18,7 @@ const (
 
 func main() {
 	paddle := rl.NewRectangle(float32(ScreenWidth/2 - 125/2), float32(ScreenHeight - 50), 125, 5)
-	paddleSpeed := float32(200)
+	paddleSpeed := float32(300)
 
 	ballVel := rl.NewVector2(0, 300)
 	ballColor := rl.Red
